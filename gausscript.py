@@ -143,7 +143,7 @@ for i in ["charge", "multiplicity", "nproc"]:
 if args.memory == None:
     infiniteloop = True
     while infiniteloop:
-        rawinput = (raw_input("\n\n\n Please define memory (MB) (or x to exit): ".format(i)))
+        rawinput = (raw_input("\n\n\n Please define memory (MB) (or x to exit): "))
         if rawinput == 'x' :
             print("x pressed, exiting...")
             exit(0)
