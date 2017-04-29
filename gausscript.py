@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/python2.5
 print("..::Yan's lazy chemist gaussian input creator::..")
 #this program is inteded as another excercise in python and attempt to create comfort and usefull script for creating gaussian input file.
 
@@ -55,7 +55,7 @@ if args.batch == False:
         inputfile.close()
         jobname.append(args.input)
     except:
-        print """\n\n\n Input {} is not file, exiting...""".format(args.input)
+        print """\n\n\n Input %s is not file, exiting...""" %((args.input))
         exit(0)
 else:
     #if it's batch input we generate all what looks save to generate and skip wierdnesses
@@ -63,20 +63,20 @@ else:
         inputfiles = os.listdir(args.input)
         print """\n\n\n"""
     except:
-        print """\n\n\n Input {} is not folder, exiting...""".format(args.input)
+        print """\n\n\n Input %s is not folder, exiting..."""%((args.input))
         exit(0)
     for i in inputfiles:
         filepath = args.input + "/" + i
         #need to process .xyz geometry exception..
         insuffix = i[-4:]
         if (insuffix == ".gjf" or insuffix == ".com"):
-            print """Skipping {} - looks like output file...""".format(filepath)
+            print """Skipping %s - looks like output file..."""%((filepath))
         elif os.path.isdir(filepath):
-            print """Skipping {} - looks like directory...""".format(filepath)
+            print """Skipping %s - looks like directory..."""%((filepath))
         elif os.path.exists(filepath + ".gjf"):
-            print """Skipping {0} - looks like already have it's counterpart {0}.gjf...""".format(filepath)
+            print """Skipping %s - looks like already have it's counterpart %s.gjf..."""%((filepath, filepath))
         elif insuffix == ".xyz" and os.path.exists(filepath[:-4] + ".gjf"):
-            print """Skipping {0}.xyz - looks like already have it's counterpart {0}.gjf...""".format(filepath[:-4])
+            print """Skipping %s.xyz - looks like already have it's counterpart %s.gjf..."""%((filepath[:-4],filepath[:-4]))
         else:
             try:
                 # END OF HERE WORKING ...
@@ -84,11 +84,11 @@ else:
                 inputgeom.append(inputfile.read())
                 inputfile.close()
                 jobname.append(i)
-                print """Adding {} to input array...""".format(filepath)
+                print """Adding %s to input array..."""%((filepath))
             except:
-                print """{} is not proper file, skipping...""".format(filepath)
-    jobnames = """{}""".format(jobname)
-    print """listing DONE, will process files {} from directory {}""".format(jobnames[1:-1], args.input)
+                print """%s is not proper file, skipping..."""%((filepath))
+    jobnames = """%s"""%((filepath))
+    print """listing DONE, will process files %s from directory %s"""%((jobnames[1:-1], filepath))
 
 #if input is in .xyz format, remove suffix in case of jobname
 for i,j in enumerate(jobname):
@@ -110,7 +110,7 @@ if args.batch == False:
         outfile.append(outfile[0])
     #if outputfile already exists ask if we should overwrite it (https://docs.python.org/2/library/os.path.html#os.path.exists, https://docs.python.org/2/library/stdtypes.html#str.format)
     if os.path.exists(outfile[0]):
-        owerwrite = raw_input("""Output file '{}' already exists in filesystem, overwrite it? [y/N]: """.format(outfile[0]))
+        owerwrite = raw_input("""Output file %s already exists in filesystem, overwrite it? [y/N]: """ %((outfile[0])))
         if owerwrite != 'y':
             print "\n\n\nNot overwriting already existing gaussian input file, exiting..."
             exit(0)
@@ -121,13 +121,13 @@ else:
         outfile.append(os.path.basename(i) + ".gjf")
 
 
-#if charge, multiplicity or number of cpus is not defined, define them (and restrict input to integer)
+#if charge.format(jobnames[1:-1], args.input), multiplicity or number of cpus is not defined, define them (and restrict input to integer)
 for i in ["charge", "multiplicity", "nproc"]:
     if getattr(args, i) == None:
         #https://docs.python.org/3/reference/compound_stmts.html#try
         infiniteloop = True
         while infiniteloop:
-            rawinput = (raw_input("\n\n\n Please define {} (or x to exit): ".format(i)))
+            rawinput = (raw_input("\n\n\n Please define %s (or x to exit): " %((i))))
             if rawinput == 'x' :
                 print("x pressed, exiting...")
                 exit(0)
@@ -135,15 +135,15 @@ for i in ["charge", "multiplicity", "nproc"]:
                 setattr(args, i, int(rawinput))
                 infiniteloop = False
             except:
-                print("excepted integer, please try to concentrate and write some nice integer when trying to set {}".format(i))
+                print("excepted integer, please try to concentrate and write some nice integer when trying to set %s"%((i)))
         #https://docs.python.org/2/library/stdtypes.html#str.title
-    print ("""{} is set to {}\n""".format(i.title(),getattr(args, i)))
+    print ("""%s is set to %d\n"""%((i.title(),getattr(args, i))))
 
 #same for memory, but it has unit so formatting is slightly different
 if args.memory == None:
     infiniteloop = True
     while infiniteloop:
-        rawinput = (raw_input("\n\n\n Please define memory (MB) (or x to exit): ".format(i)))
+        rawinput = (raw_input("\n\n\n Please define memory (MB) (or x to exit): "))
         if rawinput == 'x' :
             print("x pressed, exiting...")
             exit(0)
@@ -152,7 +152,7 @@ if args.memory == None:
             infiniteloop = False
         except:
             print("excepted integer, please try to concentrate and write some nice integer when trying to set Memory")
-print ("""Memory is set to {} MB\n""".format(args.memory))
+print ("""Memory is set to %d MB\n"""%((args.memory)))
 
 #if head file is defined read it, if not, just show our predefined heads..
 if not (args.routecard == None):
@@ -164,12 +164,12 @@ if not (args.routecard == None):
 #enumerate predefined heads (https://docs.python.org/2/library/functions.html#enumerate) and list them
 else:
     print("No route card defined, please select one of predefined")
-    for enumeratednum, enumeratedvalue in enumerate(predefrc, 1):
-        print """{0}: {1}""".format(enumeratednum, enumeratedvalue)
+    for enumeratednum, enumeratedvalue in enumerate(predefrc):
+        print """%d: %s"""%(((enumeratednum + 1), enumeratedvalue))
     headnum = int(raw_input("\n Please select number of route card: "))-1
     print("")
     routecard = predefrc[headnum]
-print ("""Route card is set to:\n'{}'""".format(routecard))
+print ("""Route card is set to:\n'%s'"""%((routecard)))
 
 
 
@@ -177,14 +177,14 @@ print ("""Route card is set to:\n'{}'""".format(routecard))
 
 
 #we've everything what we need, so it's time to roll a dice
-outfilelist = """{}""".format(outfile)
-writeit = str(raw_input("""\n\n\n    All criterias was defined, write gaussian input into file(s) {} ? [Y/n]""".format(outfilelist[1:-1])))
+outfilelist = """%s"""%((outfile))
+writeit = str(raw_input("""\n\n\n    All criterias was defined, write gaussian input into file(s) %s ? [Y/n]"""%((outfilelist[1:-1]))))
 
 if (writeit == 'n' or writeit == 'N' or writeit == 'No' or writeit == 'no'):
-    print ("""\n\n\ncreation of configuration file(s) {} canceled, exiting...""".format(outfilelist[1:-1]))
+    print ("""\n\n\ncreation of configuration file(s) %s canceled, exiting..."""%((outfilelist[1:-1])))
     exit(0)
 
-print ("""creating/rewriting configuration file(s) {} """.format(outfilelist[1:-1]))
+print ("""creating/rewriting configuration file(s) %s"""%((outfilelist[1:-1])))
 
 for i,j in enumerate(outfile):
     if args.batch == False:
@@ -196,14 +196,14 @@ for i,j in enumerate(outfile):
     if geometry[-2:] != """\n\n""":
         geometry = geometry + """\n"""
     outfile.write(
-"""%chk={}
-%mem={}MB
-%nproc={}
-{}
+"""%%chk=%s
+%%mem=%dMB
+%%nproc=%d
+%s
 
 
-{} {}
-{}""".format(j[:-4] + ".chk", args.memory, args.nproc, routecard, args.charge, args.multiplicity, geometry))
+%d %d
+%s"""%((j[:-4] + ".chk", args.memory, args.nproc, routecard, args.charge, args.multiplicity, geometry)))
     outfile.close
 
 exit(0)
